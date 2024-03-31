@@ -37,7 +37,7 @@ Exercícios de treino:
 - tempoDescanso
 
 Treino:
-	código
-	iniciado
-	listaExercícios
+- código
+- iniciado
+- listaExercícios
 
