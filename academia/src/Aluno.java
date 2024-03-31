@@ -1,9 +1,9 @@
 import java.util.Date;
 
 public class Aluno {
-    String nome;
-    String CPF;
-    Date data_nascimento;
+    private String nome;
+    private String CPF;
+    private Date data_nascimento;
     public String getNome() {
         return nome;
     }
