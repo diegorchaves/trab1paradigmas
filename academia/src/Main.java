@@ -1,86 +1,50 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Main {
     public static void main(String[] args) {
 
-        List<Musculo> musculosDisponiveis = new ArrayList<Musculo>();
-        adicionarMusculos(musculosDisponiveis);
+//        ListaMusculosDisponiveis musculosDisponiveis = new ListaMusculosDisponiveis();
+//
+//        for (Musculo musculo : musculosDisponiveis.listaMusculos) {
+//
+//            System.out.println(musculo.getCodigo()+" - "+musculo.getNome());
+//        }
+//
+//        Exercicio supino = new Exercicio();
+//        supino.adicionarMusculo(musculosDisponiveis.listaMusculos);
+//
+//        supino.imprimirMusculos ();
 
-        for (Musculo musculo : musculosDisponiveis) {
+//        ListaPlanosDisponiveis planosDisponiveis = new ListaPlanosDisponiveis();
+//
+//        Plano newPlano = new Plano();
+//        newPlano.setNome("Premium");
+//        newPlano.setCodigo(planosDisponiveis.listaPlanos.size() + 1);
+//        newPlano.setValorMensal(99.9);
+//
+//        planosDisponiveis.adicionarPlano(newPlano);
+//
+//        for (Plano plano : planosDisponiveis.listaPlanos) {
+//
+//            System.out.println(plano.getCodigo()+" - "+plano.getNome() + " - " + plano.getValorMensal());
+//        }
 
-            System.out.println(musculo.getCodigo()+" - "+musculo.getNome());
+        ListaAlunosCadastrados alunosCadastrados = new ListaAlunosCadastrados();
+
+        Aluno newAluno = new Aluno();
+        newAluno.setNome("Joao");
+        newAluno.setCPF("112233445-56");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2005, 3, 19);
+
+        newAluno.setData_nascimento(calendar.getTime());
+
+        alunosCadastrados.adicionarAluno(newAluno);
+        for(Aluno aluno : alunosCadastrados.listaAlunos){
+            String dateFormat = new SimpleDateFormat("dd/MM/yyyy").format(aluno.getData_nascimento());
+            System.out.println(aluno.getNome() + " - " + aluno.getCPF() + " - " + dateFormat );
         }
-
-        adicionarMusculos(musculosDisponiveis);
-
-        Exercicio supino = new Exercicio();
-        supino.adicionarMusculo(musculosDisponiveis);
-
-        supino.imprimirMusculos ();
-    }
-
-    public static void adicionarMusculos(List<Musculo>musculosDisponiveis) {
-        Musculo deltoide = new Musculo();
-        deltoide.setNome("Deltoide");
-        deltoide.setCodigo(1);
-
-        Musculo peitoral = new Musculo();
-        peitoral.setNome("Peitoral");
-        peitoral.setCodigo(2);
-
-        Musculo biceps = new Musculo();
-        biceps.setNome("Biceps");
-        biceps.setCodigo(3);
-
-        Musculo triceps = new Musculo();
-        triceps.setNome("Triceps");
-        triceps.setCodigo(4);
-
-        Musculo obliquos = new Musculo();
-        obliquos.setNome("Obliquos");
-        obliquos.setCodigo(5);
-
-        Musculo abdominal = new Musculo();
-        abdominal.setNome("Abdominal");
-        abdominal.setCodigo(6);
-
-        Musculo quadriceps = new Musculo();
-        quadriceps.setNome("Quadriceps");
-        quadriceps.setCodigo(7);
-
-        Musculo trapezio = new Musculo();
-        trapezio.setNome("Trapezio");
-        trapezio.setCodigo(8);
-
-        Musculo dorsal = new Musculo();
-        dorsal.setNome("Dorsal");
-        dorsal.setCodigo(9);
-
-        Musculo gluteo = new Musculo();
-        gluteo.setNome("Gluteo");
-        gluteo.setCodigo(10);
-
-        Musculo isquiotibial = new Musculo();
-        isquiotibial.setNome("Isquiotibial");
-        isquiotibial.setCodigo(11);
-
-        Musculo gemeos = new Musculo();
-        gemeos.setNome("Gemeos");
-        gemeos.setCodigo(12);
-
-        musculosDisponiveis.add(deltoide);
-        musculosDisponiveis.add(peitoral);
-        musculosDisponiveis.add(biceps);
-        musculosDisponiveis.add(triceps);
-        musculosDisponiveis.add(obliquos);
-        musculosDisponiveis.add(abdominal);
-        musculosDisponiveis.add(quadriceps);
-        musculosDisponiveis.add(trapezio);
-        musculosDisponiveis.add(dorsal);
-        musculosDisponiveis.add(gluteo);
-        musculosDisponiveis.add(isquiotibial);
-        musculosDisponiveis.add(gemeos);
     }
 }
