@@ -1,9 +1,13 @@
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Exercicio {
-    Integer codigo;
-    String nome;
-    List<String> grupo_muscular;
+    private Integer codigo;
+    private String nome;
+    private List<Musculo> musculosTreinados = new ArrayList<Musculo>();
+    Scanner entrada = new Scanner(System.in);
+
 
     public Integer getCodigo() {
         return codigo;
@@ -21,11 +25,42 @@ public class Exercicio {
         this.nome = nome;
     }
 
-    public List<String> getGrupo_muscular() {
-        return grupo_muscular;
+    public List<Musculo> getMusculosTreinados() {
+        return musculosTreinados;
     }
 
-    public void setGrupo_muscular(List<String> grupo_muscular) {
-        this.grupo_muscular = grupo_muscular;
+    public void adicionarMusculo (List<Musculo> musculosDisponiveis) {
+        int codigo;
+
+        do {
+            System.out.println("Digite o codigo do musculo que deseja adicionar: ");
+            codigo = entrada.nextInt();
+            entrada.nextLine();
+
+            if (codigo == 0) {
+                break;
+            }
+
+            boolean encontrado = false;
+
+            for (Musculo musculo : musculosDisponiveis) {
+                if (musculo.getCodigo() == codigo) {
+                    musculosTreinados.add(musculo);
+                    System.out.println(musculo.getNome() + " foi adicionado com sucesso!");
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (!encontrado) {
+                System.out.println("Codigo invalido. Tente novamente!");
+            }
+        } while (true);
+
+    }
+
+    public void imprimirMusculos() {
+        for (Musculo musculo : musculosTreinados) {
+            System.out.println(musculo.getNome());
+        }
     }
 }
