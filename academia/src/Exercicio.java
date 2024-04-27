@@ -1,29 +1,24 @@
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Exercicio {
-    private Integer numero;
     private String nome;
-    private List<Musculo> listaMusculosAtivados = new ArrayList<Musculo>();
 
-    public void setNumero(Integer numero) {
-        this.numero = numero;
+    public String getNome() {
+        return nome;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
     }
 
-    public void adicionarMusculoAtivado(Musculo musculo) {
-        listaMusculosAtivados.add(musculo);
-    }
+    public void setDadosScanner(){
+        Scanner entrada = new Scanner(System.in);
 
-    public void imprimirExercicio() {
-        System.out.print(numero+" - "+nome+" - Musculos ativados: ");
-        for (Musculo i : listaMusculosAtivados) {
-            System.out.print(i.getNome()+" ");
-        }
-    }
+        System.out.println("Informe o nome do Exercicio: ");
+        this.setNome(entrada.nextLine());
 
+    }
 }

@@ -24,11 +24,19 @@ public class Main {
                     break;
                 case 1:
                     Aluno novoAluno = new Aluno();
-                    novoAluno.cadastrarNovoAluno(conexaoLocal);
+                    novoAluno.setDadosScanner();
+                    conexaoLocal.adicionarAlunos(novoAluno);
+                    break;
                 case 2:
                     Plano novoPlano = new Plano();
-                    novoPlano.cadastrarNovoPlano(conexaoLocal);
-
+                    novoPlano.setDadosScanner();
+                    conexaoLocal.adicionarPlanos(novoPlano);
+                    break;
+                case 3:
+                    Exercicio novoExercicio = new Exercicio();
+                    novoExercicio.setDadosScanner();
+                    conexaoLocal.adicionarExercicios(novoExercicio);
+                    break;
             }
         } while(opcaoEscolhida != 0);
 

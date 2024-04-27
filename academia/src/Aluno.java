@@ -42,26 +42,16 @@ public class Aluno {
         return("Nome: "+nome+"\tCPF: "+cpf+"\tData de nascimento: "+dataNascimento);
     }
 
-    public void cadastrarNovoAluno(ConexaoBD conexaoLocal) throws ClassNotFoundException, SQLException{
+    public void setDadosScanner(){
         Scanner entrada = new Scanner(System.in);
-        String nome;
-        String cpf;
-        String nascimento;
-
         System.out.println("Informe o nome do aluno: ");
-        nome = entrada.nextLine();
+        this.setNome(entrada.nextLine());
 
         System.out.println("Informe o CPF do aluno: ");
-        cpf = entrada.nextLine();
+        this.setCpf(entrada.nextLine());
 
         System.out.println("Informe o data de nascimento do aluno: ");
-        nascimento = entrada.nextLine();
-        this.setDataNascimento(nascimento);
-
-        conexaoLocal.adicionarAlunos(cpf, nome, this.dataNascimento);
-
-
-
+        this.setDataNascimento(entrada.nextLine());
     }
 
 }

@@ -33,24 +33,20 @@ public class Plano {
         return("Codigo: "+codigo+"\tNome: "+nome+"\tValor mensal: R$ "+valorMensal);
     }
 
-    public void cadastrarNovoPlano(ConexaoBD conexaoLocal) throws ClassNotFoundException, SQLException {
+    public void setDadosScanner(){
         Scanner entrada = new Scanner(System.in);
-        String nome;
-        double valorMensal = 0;
 
         System.out.println("Informe o nome do plano: ");
-        nome = entrada.nextLine();
+        this.setNome(entrada.nextLine());
 
         System.out.println("Informe o valor mensal do plano: ");
         var str = entrada.nextLine();
         try {
-            valorMensal = Double.parseDouble(str);
+            this.setValorMensal(Double.parseDouble(str));
         } catch (NumberFormatException e) {
             System.out.println(str + " nao é um numero valido.");
         }
 
-
-        conexaoLocal.adicionarPlanos(nome, valorMensal);
 
     }
 }
