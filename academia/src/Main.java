@@ -1,50 +1,41 @@
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+
+import java.sql.SQLException;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
 
-//        ListaMusculosDisponiveis musculosDisponiveis = new ListaMusculosDisponiveis();
-//
-//        for (Musculo musculo : musculosDisponiveis.listaMusculos) {
-//
-//            System.out.println(musculo.getCodigo()+" - "+musculo.getNome());
-//        }
-//
-//        Exercicio supino = new Exercicio();
-//        supino.adicionarMusculo(musculosDisponiveis.listaMusculos);
-//
-//        supino.imprimirMusculos ();
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
-//        ListaPlanosDisponiveis planosDisponiveis = new ListaPlanosDisponiveis();
-//
-//        Plano newPlano = new Plano();
-//        newPlano.setNome("Premium");
-//        newPlano.setCodigo(planosDisponiveis.listaPlanos.size() + 1);
-//        newPlano.setValorMensal(99.9);
-//
-//        planosDisponiveis.adicionarPlano(newPlano);
-//
-//        for (Plano plano : planosDisponiveis.listaPlanos) {
-//
-//            System.out.println(plano.getCodigo()+" - "+plano.getNome() + " - " + plano.getValorMensal());
-//        }
+        var entrada = new Scanner(System.in);
+        int opcaoEscolhida;
+        ConexaoBD conexaoLocal = new ConexaoBD();
+        conexaoLocal.conexaoBD();
 
-        ListaAlunosCadastrados alunosCadastrados = new ListaAlunosCadastrados();
+        do {
+            System.out.println("Selecione a opcao desejada: ");
+            System.out.println("0 - Encerrar programa.");
+            System.out.println("1 - Cadastrar aluno.");
+            System.out.println("2 - Cadastrar plano.");
+            System.out.println("3 - Cadastrar exercicio.");
+            opcaoEscolhida = entrada.nextInt();
 
-        Aluno newAluno = new Aluno();
-        newAluno.setNome("Joao");
-        newAluno.setCPF("112233445-56");
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2005, 3, 19);
+            switch(opcaoEscolhida) {
+                case 0:
+                    break;
+                case 1:
+                    Aluno novoAluno = new Aluno();
+                    novoAluno.cadastrarNovoAluno(conexaoLocal);
+                case 2:
+                    Plano novoPlano = new Plano();
+                    novoPlano.cadastrarNovoPlano(conexaoLocal);
 
-        newAluno.setData_nascimento(calendar.getTime());
+            }
+        } while(opcaoEscolhida != 0);
 
-        alunosCadastrados.adicionarAluno(newAluno);
-        for(Aluno aluno : alunosCadastrados.listaAlunos){
-            String dateFormat = new SimpleDateFormat("dd/MM/yyyy").format(aluno.getData_nascimento());
-            System.out.println(aluno.getNome() + " - " + aluno.getCPF() + " - " + dateFormat );
-        }
+
+        conexaoLocal.imprimirAlunos("SELECT * FROM alunos");
+
+
     }
+
 }

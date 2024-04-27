@@ -1,66 +1,29 @@
-import java.util.List;
+
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.List;
 
 public class Exercicio {
-    private Integer codigo;
+    private Integer numero;
     private String nome;
-    private List<Musculo> musculosTreinados = new ArrayList<Musculo>();
-    Scanner entrada = new Scanner(System.in);
+    private List<Musculo> listaMusculosAtivados = new ArrayList<Musculo>();
 
-
-    public Integer getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getNome() {
-        return nome;
+    public void setNumero(Integer numero) {
+        this.numero = numero;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
     }
 
-    public List<Musculo> getMusculosTreinados() {
-        return musculosTreinados;
+    public void adicionarMusculoAtivado(Musculo musculo) {
+        listaMusculosAtivados.add(musculo);
     }
 
-    public void adicionarMusculo (List<Musculo> musculosDisponiveis) {
-        int codigo;
-
-        do {
-            System.out.println("Digite o codigo do musculo que deseja adicionar: ");
-            codigo = entrada.nextInt();
-            entrada.nextLine();
-
-            if (codigo == 0) {
-                break;
-            }
-
-            boolean encontrado = false;
-
-            for (Musculo musculo : musculosDisponiveis) {
-                if (musculo.getCodigo() == codigo) {
-                    musculosTreinados.add(musculo);
-                    System.out.println(musculo.getNome() + " foi adicionado com sucesso!");
-                    encontrado = true;
-                    break;
-                }
-            }
-            if (!encontrado) {
-                System.out.println("Codigo invalido. Tente novamente!");
-            }
-        } while (true);
-
-    }
-
-    public void imprimirMusculos() {
-        for (Musculo musculo : musculosTreinados) {
-            System.out.println(musculo.getNome());
+    public void imprimirExercicio() {
+        System.out.print(numero+" - "+nome+" - Musculos ativados: ");
+        for (Musculo i : listaMusculosAtivados) {
+            System.out.print(i.getNome()+" ");
         }
     }
+
 }
