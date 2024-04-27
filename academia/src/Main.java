@@ -17,6 +17,7 @@ public class Main {
             System.out.println("1 - Cadastrar aluno.");
             System.out.println("2 - Cadastrar plano.");
             System.out.println("3 - Cadastrar exercicio.");
+            System.out.println("4 - Assinar Plano.");
             opcaoEscolhida = entrada.nextInt();
 
             switch(opcaoEscolhida) {
@@ -36,6 +37,9 @@ public class Main {
                     Exercicio novoExercicio = new Exercicio();
                     novoExercicio.setDadosScanner();
                     conexaoLocal.adicionarExercicios(novoExercicio);
+                    break;
+                case 4:
+                    conexaoLocal.assinarPlano();
                     break;
             }
         } while(opcaoEscolhida != 0);

@@ -33,13 +33,38 @@ public class ConexaoBD {
         while(rs.next())
             System.out.println(rs.getString("codigo")+" - "+rs.getString("nome"));
     }
-    public void adicionarAlunos(Aluno novoAluno) throws ClassNotFoundException, SQLException{
+
+    public void imprimirPlanos(String query) throws ClassNotFoundException, SQLException{
+        Statement s = c.createStatement();
+        System.out.println("Listando Planos: ");
+        ResultSet rs = s.executeQuery(query);
+        while(rs.next())
+            System.out.println(rs.getString("codigo")+" - "+rs.getString("nome") + " valor: " + rs.getString("valor") );
+    }
+    public void adicionarCartao(Cartao cartao, String cpfAluno) throws ClassNotFoundException, SQLException {
         PreparedStatement p = c.prepareStatement(
-                "INSERT INTO alunos (cpf, nome, nascimento) VALUES (?, ?, ?)");
+                "INSERT INTO cartoes (cpfaluno, numero, cvv, datavencimento) VALUES (?, ?, ?, ?)");
+        p.setString(1, cpfAluno);
+        p.setString(2, cartao.getNumero());
+        p.setString(3, cartao.getCvv());
+        p.setObject(4, cartao.getDataVencimento());
+        p.execute();
+
+    }
+    public void adicionarAlunos(Aluno novoAluno) throws ClassNotFoundException, SQLException{
+        Cartao cartao = new Cartao();
+
+        cartao.setDadosScanner();
+
+        PreparedStatement p = c.prepareStatement(
+                "INSERT INTO alunos (cpf, nome, nascimento, numerocartao) VALUES (?, ?, ?, ?)");
         p.setString(1, novoAluno.getCpf());
         p.setString(2, novoAluno.getNome());
         p.setObject(3, novoAluno.getDataNascimento());
+        p.setString(4, cartao.getNumero());
         p.execute();
+
+        adicionarCartao(cartao, novoAluno.getCpf());
     }
     public void adicionarPlanos(Plano novoPlano) throws ClassNotFoundException, SQLException{
         PreparedStatement p = c.prepareStatement(
@@ -87,5 +112,44 @@ public class ConexaoBD {
                 p.execute();
             }
         } while (opcaoEscolhida != 0);
+    }
+
+    public void assinarPlano() throws ClassNotFoundException, SQLException{
+        Scanner entrada = new Scanner(System.in);
+        String cpfLocal;
+
+        System.out.println("Digite seu cpf: ");
+        cpfLocal = entrada.nextLine();
+
+        Statement s = c.createStatement();
+        cpfLocal = "\'" + cpfLocal + "\'";
+        ResultSet rs = s.executeQuery("SELECT * FROM alunos WHERE cpf = " + cpfLocal);
+
+        if(rs.next()){
+
+            System.out.println("Escolha o o plano: ");
+            imprimirPlanos("SELECT * FROM planos");
+            String opcaoEscolhida = entrada.nextLine();
+
+            rs = s.executeQuery("SELECT * FROM planos WHERE codigo = " + opcaoEscolhida);
+
+            if(rs.next()){
+                System.out.println("Assinando plano " + rs.getString("nome"));
+                LocalDate dataInicio = LocalDate.now();
+                LocalDate dataFim = dataInicio.plusDays(30);
+                PreparedStatement p = c.prepareStatement(
+                        "INSERT INTO planosativos (cpfaluno, plano, inicio, fim) VALUES (?, ?, ?, ?)");
+                p.setString(1, cpfLocal );
+                p.setString(2, rs.getString("nome"));
+                p.setObject(3, dataInicio);
+                p.setObject(4, dataFim);
+                p.execute();
+            } else{
+                System.out.println("Plano nao existe.");
+            }
+        } else {
+            System.out.println("Usuário não encontrado.");
+        }
+
     }
 }
