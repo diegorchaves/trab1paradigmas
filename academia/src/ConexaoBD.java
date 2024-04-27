@@ -150,6 +150,49 @@ public class ConexaoBD {
         } else {
             System.out.println("Usuário não encontrado.");
         }
+    }
 
+    public void buscarAluno() throws SQLException, ClassNotFoundException {
+        Scanner entrada = new Scanner(System.in);
+        System.out.println("Deseja buscar o aluno por nome (1) ou cpf (2)?");
+        int opcao = entrada.nextInt();
+        entrada.nextLine();
+        if (opcao == 1){
+            System.out.println("Digite o nome do aluno: ");
+            String nomeLocal = entrada.nextLine();
+            nomeLocal = "\'" + nomeLocal + "\'";
+            Statement s = null;
+            try {
+                s = c.createStatement();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            ResultSet rs = s.executeQuery("SELECT * FROM alunos WHERE nome = " + nomeLocal);
+            if (rs.next()){
+                System.out.println("Aluno "+rs.getString("nome")+" encontrado.");
+            }
+            else {
+                System.out.println("Aluno nao encontrado.");
+            }
+        } else if (opcao == 2) {
+            System.out.println("Digite o cpf do aluno: ");
+            String cpfLocal = entrada.nextLine();
+            cpfLocal = "\'" + cpfLocal + "\'";
+            Statement s = null;
+            try {
+                s = c.createStatement();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            ResultSet rs = s.executeQuery("SELECT * FROM alunos WHERE cpf = " + cpfLocal);
+            if (rs.next()){
+                System.out.println("Aluno "+rs.getString("nome")+" encontrado.");
+            }
+            else {
+                System.out.println("Aluno nao encontrado.");
+            }
+        } else {
+            System.out.println("Opcao invalida.");
+        }
     }
 }
