@@ -47,6 +47,38 @@ public class ConexaoBD {
             System.out.println(rs.getString("codigo")+" - "+rs.getString("nome"));
 
     }
+    public void imprimirTreinoExercicios(String query) throws ClassNotFoundException, SQLException{
+        Statement s = c.createStatement();
+
+        ResultSet rs = s.executeQuery(query);
+        if(rs.next()){
+            System.out.println("Listando detalhes do treino: ");
+            System.out.println("Series: " + rs.getInt("numero_series")+
+                "\nMin repeticoes: "+rs.getInt("min_repeticoes")+
+                "\nMax repeticoes: "+rs.getInt("max_repeticoes")+
+                "\nCarga: "+rs.getInt("carga")+ "Kg" +
+                "\nTempo de Descanso: "+rs.getInt("tempo_descanso") + " minutos"
+        );
+
+        }else{
+            System.out.println("Nenhum Treino encontrado");
+        }
+
+
+    }
+    public int imprimirTreinos(String query) throws ClassNotFoundException, SQLException{
+        int numeroTreinos = 0;
+        Statement s = c.createStatement();
+        System.out.println("Listando Treinos: ");
+        ResultSet rs = s.executeQuery(query);
+        while(rs.next()){
+            numeroTreinos++;
+            System.out.println(rs.getString("codigo")+" - "+rs.getString("nome"));
+        }
+
+        return numeroTreinos;
+
+    }
     public void adicionarCartao(Cartao cartao, String cpfAluno) throws ClassNotFoundException, SQLException {
         PreparedStatement p = c.prepareStatement(
                 "INSERT INTO cartoes (cpfaluno, numero, cvv, datavencimento) VALUES (?, ?, ?, ?)");
@@ -304,5 +336,20 @@ public class ConexaoBD {
         }
 
         return 0;
+    }
+
+    public void buscarTreino() throws ClassNotFoundException, SQLException{
+        Scanner entrada = new Scanner(System.in);
+        String cpfLocal =  "\'" + buscarAluno() + "\'";
+        int codigoTreino = 0;
+
+        if(imprimirTreinos("SELECT * FROM treinos WHERE alunocpf = " + cpfLocal) != 0){
+            System.out.println("Digite o codigo do treino que deseja ver os detalhes: ");
+            codigoTreino = entrada.nextInt();
+            imprimirTreinoExercicios("SELECT * FROM treinoexercicios WHERE codtreino = " + codigoTreino);
+        }else{
+            System.out.println("Nenhum treino encontrado");
+        }
+
     }
 }

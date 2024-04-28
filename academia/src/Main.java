@@ -20,6 +20,7 @@ public class Main {
             System.out.println("4 - Assinar Plano.");
             System.out.println("5 - Buscar aluno.");
             System.out.println("6 - Cadastrar Treino.");
+            System.out.println("7 - buscar Treino.");
             opcaoEscolhida = entrada.nextInt();
 
             switch(opcaoEscolhida) {
@@ -48,6 +49,9 @@ public class Main {
                     break;
                 case 6:
                     conexaoLocal.adicionarTreino();
+                    break;
+                case 7:
+                    conexaoLocal.buscarTreino();
                     break;
             }
         } while(opcaoEscolhida != 0);
