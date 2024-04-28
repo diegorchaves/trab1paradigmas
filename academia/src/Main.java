@@ -18,6 +18,8 @@ public class Main {
             System.out.println("2 - Cadastrar plano.");
             System.out.println("3 - Cadastrar exercicio.");
             System.out.println("4 - Assinar Plano.");
+            System.out.println("5 - Buscar aluno.");
+            System.out.println("6 - Cadastrar Treino.");
             opcaoEscolhida = entrada.nextInt();
 
             switch(opcaoEscolhida) {
@@ -41,13 +43,13 @@ public class Main {
                 case 4:
                     conexaoLocal.assinarPlano();
                     break;
+                case 5:
+                    conexaoLocal.buscarAluno();
+                    break;
+                case 6:
+                    conexaoLocal.adicionarTreino();
+                    break;
             }
         } while(opcaoEscolhida != 0);
-
-
-        conexaoLocal.imprimirAlunos("SELECT * FROM alunos");
-
-
     }
-
 }
