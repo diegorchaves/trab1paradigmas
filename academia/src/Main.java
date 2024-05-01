@@ -21,6 +21,9 @@ public class Main {
             System.out.println("5 - Buscar aluno.");
             System.out.println("6 - Cadastrar Treino.");
             System.out.println("7 - buscar Treino.");
+            System.out.println("8 - Excluir Treino.");
+            System.out.println("9 - Alterar Treino.");
+            System.out.println("10 - Excluir exercicios do Treino.");
             opcaoEscolhida = entrada.nextInt();
 
             switch(opcaoEscolhida) {
@@ -52,6 +55,15 @@ public class Main {
                     break;
                 case 7:
                     conexaoLocal.buscarTreino();
+                    break;
+                case 8:
+                    conexaoLocal.excluirTreino();
+                    break;
+                case 9:
+                    conexaoLocal.alterarTreino();
+                    break;
+                case 10:
+                    conexaoLocal.excluirExerciciosTreino();
                     break;
             }
         } while(opcaoEscolhida != 0);

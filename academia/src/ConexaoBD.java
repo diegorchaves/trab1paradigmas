@@ -52,19 +52,27 @@ public class ConexaoBD {
 
         ResultSet rs = s.executeQuery(query);
         if(rs.next()){
-            System.out.println("Listando detalhes do treino: ");
-            System.out.println("Series: " + rs.getInt("numero_series")+
-                "\nMin repeticoes: "+rs.getInt("min_repeticoes")+
-                "\nMax repeticoes: "+rs.getInt("max_repeticoes")+
-                "\nCarga: "+rs.getInt("carga")+ "Kg" +
-                "\nTempo de Descanso: "+rs.getInt("tempo_descanso") + " minutos"
-        );
+            System.out.println("Detalhes do treino: ");
+            do{
 
-        }else{
-            System.out.println("Nenhum Treino encontrado");
+                Statement s2 = c.createStatement();
+                ResultSet rs2 = s2.executeQuery("SELECT * FROM exercicios WHERE codigo = "+ rs.getInt("codexe"));
+                System.out.println("Listando Exercicios do Treino");
+                while(rs2.next()){
+                    System.out.println("\nDetalhes do exercicio "+rs2.getString("nome"));
+                }
+
+                System.out.println("Series: " + rs.getInt("numero_series")+
+                        "\nMin repeticoes: "+rs.getInt("min_repeticoes")+
+                        "\nMax repeticoes: "+rs.getInt("max_repeticoes")+
+                        "\nCarga: "+rs.getInt("carga")+ "Kg" +
+                        "\nTempo de Descanso: "+rs.getInt("tempo_descanso") + " minutos"
+                );
+            }while (rs.next());
+            System.out.println("\n");
+       }else{
+            System.out.println("Nenhum Treino encontrado\n");
         }
-
-
     }
     public int imprimirTreinos(String query) throws ClassNotFoundException, SQLException{
         int numeroTreinos = 0;
@@ -158,7 +166,7 @@ public class ConexaoBD {
 
         do{
             System.out.println("0 - Sair");
-            imprimirMusculos("SELECT * FROM exercicios");
+            imprimirExercicios("SELECT * FROM exercicios");
             opcaoEscolhida = buscarExercicio();
             if(opcaoEscolhida != 0 ){
                 TreinoExercicio treinoExercicio = new TreinoExercicio();
@@ -337,7 +345,6 @@ public class ConexaoBD {
 
         return 0;
     }
-
     public void buscarTreino() throws ClassNotFoundException, SQLException{
         Scanner entrada = new Scanner(System.in);
         String cpfLocal =  "\'" + buscarAluno() + "\'";
@@ -348,8 +355,216 @@ public class ConexaoBD {
             codigoTreino = entrada.nextInt();
             imprimirTreinoExercicios("SELECT * FROM treinoexercicios WHERE codtreino = " + codigoTreino);
         }else{
-            System.out.println("Nenhum treino encontrado");
+            System.out.println("Nenhum treino encontrado\n");
         }
 
+    }
+    public void excluirTreino() throws ClassNotFoundException, SQLException{
+        Scanner entrada = new Scanner(System.in);
+        String cpfLocal =  "\'" + buscarAluno() + "\'";
+        int codigoTreino = 0;
+
+        if(imprimirTreinos("SELECT * FROM treinos WHERE alunocpf = " + cpfLocal) != 0){
+            System.out.println("Digite o codigo do treino que deseja excluir: ");
+            codigoTreino = entrada.nextInt();
+            Statement s = c.createStatement();
+
+            int linhasAfetadas = s.executeUpdate("DELETE FROM treinoexercicios WHERE codTreino = " + codigoTreino);
+            if(linhasAfetadas > 0){
+                System.out.println("Exercicios do treino excluídos com sucesso.");
+            }else{
+                System.out.println("Não foi possível excluir os exercicios do treino.");
+            }
+
+            linhasAfetadas = s.executeUpdate("DELETE FROM treinos WHERE codigo = " + codigoTreino);
+            if(linhasAfetadas > 0){
+                System.out.println("Treino excluído com sucesso.");
+            }else{
+                System.out.println("Não foi possível excluir o treino.");
+            }
+
+        }else{
+            System.out.println("Nenhum treino encontrado");
+        }
+    }
+    public void alterarTreino() throws ClassNotFoundException, SQLException{
+        Scanner entrada = new Scanner(System.in);
+        String cpfLocal =  "\'" + buscarAluno() + "\'";
+        int codigoTreino = 0;
+        String novoNome = "";
+        int opcao = 1;
+        int codigoExe = 0;
+
+        System.out.println("Voce deseja alterar o nome do treino(1) ou os exercicios(2)?");
+        opcao = entrada.nextInt();
+
+        if(imprimirTreinos("SELECT * FROM treinos WHERE alunocpf = " + cpfLocal) != 0){
+            System.out.println("Digite o codigo do treino que deseja alterar: ");
+            codigoTreino = entrada.nextInt();
+
+            if(opcao == 1){
+                System.out.println("Digite o novo nome do treino: ");
+                entrada = new Scanner(System.in);
+                novoNome = "\'" + entrada.nextLine() + "\'";
+
+                Statement s = c.createStatement();
+                int linhasAfetadas = s.executeUpdate("UPDATE treinos SET nome = " + novoNome + " WHERE codigo = " + codigoTreino);
+                if(linhasAfetadas > 0){
+                    System.out.println("Treino alterado com sucesso.");
+                }else{
+                    System.out.println("Não foi possível alterar o treino.");
+                }
+            }else{
+                do{
+                    Statement s = c.createStatement();
+                    ResultSet rs = s.executeQuery("SELECT * FROM treinoexercicios WHERE codtreino = " + codigoTreino);
+                    if(rs.next()){
+                        do{
+                            Statement s2 = c.createStatement();
+                            ResultSet rs2 = s2.executeQuery("SELECT * FROM exercicios WHERE codigo = "+ rs.getInt("codexe"));
+                            while(rs2.next()){
+                                System.out.println(rs2.getInt("codigo")+" - "+rs2.getString("nome"));
+                            }
+                        }while (rs.next());
+                    }else{
+                        System.out.println("Nenhum Treino encontrado\n");
+                    }
+
+                    System.out.println("Digite o codigo do exercicio que deseja alterar ou 0 p/ sair: ");
+                    codigoExe = entrada.nextInt();
+                    if(codigoExe == 0) return;
+
+                    int series;
+                    int min_rep;
+                    int max_rep;
+                    double carga;
+                    double tempo;
+
+                    System.out.println("Digite o novo numero de series : ");
+                    series = entrada.nextInt();
+                    System.out.println("Digite o novo numero minimo de repeticoes : ");
+                    min_rep = entrada.nextInt();
+                    System.out.println("Digite o novo numero maximo de repeticoes : ");
+                    max_rep = entrada.nextInt();
+                    System.out.println("Digite a nova carga : ");
+                    carga = entrada.nextDouble();
+                    System.out.println("Digite o novo tempo de descanso : ");
+                    tempo = entrada.nextDouble();
+
+                    int linhasAfetadas = s.executeUpdate("UPDATE treinoexercicios SET numero_series = " + series + ", min_repeticoes =" + min_rep + ", max_repeticoes="+ max_rep + ", carga=" + carga + ", tempo_descanso =" + tempo + " WHERE codexe = " + codigoExe);
+                    if(linhasAfetadas > 0){
+                        System.out.println("Exercicio do treino alterado com sucesso.");
+                    }else{
+                        System.out.println("Não foi possível alterar o exercicio do treino.");
+                    }
+
+                } while (codigoExe != 0);
+            }
+        }else{
+            System.out.println("Nenhum treino encontrado");
+        }
+    }
+    public void excluirExerciciosTreino() throws ClassNotFoundException, SQLException{
+        Scanner entrada = new Scanner(System.in);
+        String cpfLocal =  "\'" + buscarAluno() + "\'";
+        int codigoTreino = 0;
+        int codigoExe = 0;
+
+        if(imprimirTreinos("SELECT * FROM treinos WHERE alunocpf = " + cpfLocal) != 0){
+            System.out.println("Digite o codigo do treino que deseja excluir exercicios: ");
+            codigoTreino = entrada.nextInt();
+
+            do{
+
+                Statement s = c.createStatement();
+                ResultSet rs = s.executeQuery("SELECT * FROM treinoexercicios WHERE codtreino = " + codigoTreino);
+                if(rs.next()){
+                    do{
+
+                        Statement s2 = c.createStatement();
+                        ResultSet rs2 = s2.executeQuery("SELECT * FROM exercicios WHERE codigo = "+ rs.getInt("codexe"));
+                        while(rs2.next()){
+                            System.out.println(rs2.getInt("codigo")+" - "+rs2.getString("nome"));
+                        }
+                    }while (rs.next());
+                    System.out.println("\n");
+                }else{
+                    System.out.println("Nenhum Treino encontrado\n");
+                }
+
+
+                System.out.println("Digite o codigo do exercicio que deseja excluir : ");
+                codigoExe = entrada.nextInt();
+                if(codigoExe == 0) return;
+
+                int linhasAfetadas = s.executeUpdate("DELETE FROM treinoexercicios WHERE codexe = " + codigoExe);
+                if(linhasAfetadas > 0){
+                    System.out.println("Exercicio do treino excluído com sucesso.");
+                }else{
+                    System.out.println("Não foi possível excluir o exercicio do treino.");
+                }
+
+            } while (codigoExe != 0);
+
+        }else{
+            System.out.println("Nenhum treino encontrado");
+        }
+    }
+    public void iniciarTreinamento() throws ClassNotFoundException, SQLException{
+        Scanner entrada = new Scanner(System.in);
+        String cpfLocal =  "\'" + buscarAluno() + "\'";
+        int codigoTreino = 0;
+
+        if(imprimirTreinos("SELECT * FROM treinos WHERE alunocpf = " + cpfLocal) != 0){
+            System.out.println("Digite o codigo do treino que deseja inciar: ");
+            codigoTreino = entrada.nextInt();
+            LocalDate dataAtual = LocalDate.now();
+
+            PreparedStatement p = c.prepareStatement(
+                    "INSERT INTO treinosrealizados (codtreino, data) VALUES (?, ?)");
+            p.setInt(1, codigoTreino);
+            p.setObject(2, dataAtual);
+            p.execute();
+        }else{
+            System.out.println("Nenhum treino encontrado\n");
+        }
+
+        treinando(codigoTreino, dataAtual);
+
+        System.out.println("Treino Finalizado!");
+    }
+    public void treinando(int codigoTreino, LocalDate dataAtual) throws ClassNotFoundException, SQLException{
+        Scanner entrada = new Scanner(System.in);
+
+        Statement s = c.createStatement();
+        ResultSet rs = s.executeQuery("SELECT * FROM treinoexercicios WHERE codtreino = " + codigoTreino);
+        if(rs.next()){
+            do{
+                Statement s2 = c.createStatement();
+                ResultSet rs2 = s2.executeQuery("SELECT * FROM exercicios WHERE codigo = "+ rs.getInt("codexe"));
+                while(rs2.next()){
+                    System.out.println("Exercicio: "+rs2.getString("nome"));
+
+                    System.out.println("Deseja alterar a carga? 1 (Sim) 0 (Não)");
+                    int alterar = entrada.nextInt();
+
+                    if(alterar == 1){
+                        System.out.println("Digite a nova carga : ");
+                        double carga = entrada.nextDouble();
+
+                        int linhasAfetadas = s.executeUpdate("UPDATE treinoexercicios SET carga=" + carga + " WHERE codexe = " + rs2.getInt("codigo"));
+                        if(linhasAfetadas > 0){
+                            System.out.println("Exercicio do treino alterado com sucesso.");
+                        }else{
+                            System.out.println("Não foi possível alterar o exercicio do treino.");
+                        }
+                    }
+
+
+                }
+            }while (rs.next());
+        }else{
+            System.out.println("Nenhum Treino encontrado\n");
+        }
     }
 }
