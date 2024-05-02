@@ -573,41 +573,44 @@ public class ConexaoBD {
                 ResultSet rs2 = s2.executeQuery();
                 while(rs2.next()){
                     System.out.println("Exercicio: "+rs2.getString("nome"));
+                    System.out.println("Realizou esse exercício? Sim(1) Não(2)");
+                    int realizado = entrada.nextInt();
+                    if(realizado == 1){
+                        System.out.println("Deseja alterar a carga? 1 (Sim) 0 (Não)");
+                        int alterar = entrada.nextInt();
 
-                    System.out.println("Deseja alterar a carga? 1 (Sim) 0 (Não)");
-                    int alterar = entrada.nextInt();
+                        if(alterar == 1){
+                            System.out.println("Digite a nova carga : ");
+                            double carga = entrada.nextDouble();
 
-                    if(alterar == 1){
-                        System.out.println("Digite a nova carga : ");
-                        double carga = entrada.nextDouble();
+                            s3.setDouble(1, carga);
+                            s3.setInt(2, rs2.getInt("codigo"));
+                            int linhasAfetadas = s3.executeUpdate();
 
-                        s3.setDouble(1, carga);
-                        s3.setInt(2, rs2.getInt("codigo"));
-                        int linhasAfetadas = s3.executeUpdate();
-
-                        if(linhasAfetadas > 0){
-                            System.out.println("Carga do exercicio alterada com sucesso.");
-                            PreparedStatement p = c.prepareStatement(
-                                    "INSERT INTO historicoevolucao (codexe, carga, data) VALUES (?, ?, ?)");
-                            p.setInt(1, codigoTreino);
-                            p.setDouble(2, carga);
-                            p.setObject(3, dataAtual);
-                            p.executeUpdate();
-                        }else{
-                            System.out.println("Não foi possível alterar a carga do exercicio.");
+                            if(linhasAfetadas > 0){
+                                System.out.println("Carga do exercicio alterada com sucesso.");
+                                PreparedStatement p = c.prepareStatement(
+                                        "INSERT INTO historicoevolucao (codexe, carga, data) VALUES (?, ?, ?)");
+                                p.setInt(1, codigoTreino);
+                                p.setDouble(2, carga);
+                                p.setObject(3, dataAtual);
+                                p.executeUpdate();
+                            }else{
+                                System.out.println("Não foi possível alterar a carga do exercicio.");
+                            }
                         }
-                    }
-                    else {
-                        s4.setInt(1, rs.getInt("codexe"));
-                        ResultSet rs4 = s4.executeQuery();
-                        if(rs4.next()) {
-                            double cargaLocal = rs4.getDouble("carga");
-                            PreparedStatement p = c.prepareStatement(
-                                    "INSERT INTO historicoevolucao (codexe, carga, data) VALUES (?, ?, ?)");
-                            p.setInt(1, codigoTreino);
-                            p.setDouble(2, cargaLocal);
-                            p.setObject(3, dataAtual);
-                            p.executeUpdate();
+                        else {
+                            s4.setInt(1, rs.getInt("codexe"));
+                            ResultSet rs4 = s4.executeQuery();
+                            if(rs4.next()) {
+                                double cargaLocal = rs4.getDouble("carga");
+                                PreparedStatement p = c.prepareStatement(
+                                        "INSERT INTO historicoevolucao (codexe, carga, data) VALUES (?, ?, ?)");
+                                p.setInt(1, codigoTreino);
+                                p.setDouble(2, cargaLocal);
+                                p.setObject(3, dataAtual);
+                                p.executeUpdate();
+                            }
                         }
                     }
                 }
