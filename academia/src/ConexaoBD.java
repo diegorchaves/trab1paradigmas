@@ -70,7 +70,7 @@ public class ConexaoBD {
                 );
             }while (rs.next());
             System.out.println("\n");
-       }else{
+        }else{
             System.out.println("Nenhum Treino encontrado\n");
         }
     }
@@ -514,34 +514,48 @@ public class ConexaoBD {
         Scanner entrada = new Scanner(System.in);
         String cpfLocal =  "\'" + buscarAluno() + "\'";
         int codigoTreino = 0;
+        LocalDate dataAtual;
 
         if(imprimirTreinos("SELECT * FROM treinos WHERE alunocpf = " + cpfLocal) != 0){
             System.out.println("Digite o codigo do treino que deseja inciar: ");
             codigoTreino = entrada.nextInt();
-            LocalDate dataAtual = LocalDate.now();
+            dataAtual = LocalDate.now();
 
             PreparedStatement p = c.prepareStatement(
                     "INSERT INTO treinosrealizados (codtreino, data) VALUES (?, ?)");
             p.setInt(1, codigoTreino);
             p.setObject(2, dataAtual);
             p.execute();
+            treinando(codigoTreino, dataAtual);
+            System.out.println("Treino Finalizado!");
+
         }else{
             System.out.println("Nenhum treino encontrado\n");
         }
 
-        treinando(codigoTreino, dataAtual);
-
-        System.out.println("Treino Finalizado!");
     }
     public void treinando(int codigoTreino, LocalDate dataAtual) throws ClassNotFoundException, SQLException{
         Scanner entrada = new Scanner(System.in);
 
-        Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT * FROM treinoexercicios WHERE codtreino = " + codigoTreino);
+        String query = "SELECT * FROM treinoexercicios WHERE codtreino = ?";
+        PreparedStatement s = c.prepareStatement(query);
+        s.setInt(1, codigoTreino);
+
+        String query2 = "SELECT * FROM exercicios WHERE codigo = ?";
+        PreparedStatement s2 = c.prepareStatement(query2);
+
+        String query3 = "UPDATE treinoexercicios SET carga = ? WHERE codexe = ?";
+        PreparedStatement s3 = c.prepareStatement(query3);
+
+        String query4 = "SELECT * FROM treinoexercicios WHERE codexe = ?";
+        PreparedStatement s4 = c.prepareStatement(query4);
+
+        ResultSet rs = s.executeQuery();
         if(rs.next()){
             do{
-                Statement s2 = c.createStatement();
-                ResultSet rs2 = s2.executeQuery("SELECT * FROM exercicios WHERE codigo = "+ rs.getInt("codexe"));
+
+                s2.setInt(1, rs.getInt("codexe"));
+                ResultSet rs2 = s2.executeQuery();
                 while(rs2.next()){
                     System.out.println("Exercicio: "+rs2.getString("nome"));
 
@@ -552,15 +566,35 @@ public class ConexaoBD {
                         System.out.println("Digite a nova carga : ");
                         double carga = entrada.nextDouble();
 
-                        int linhasAfetadas = s.executeUpdate("UPDATE treinoexercicios SET carga=" + carga + " WHERE codexe = " + rs2.getInt("codigo"));
+                        s3.setDouble(1, carga);
+                        s3.setInt(2, rs2.getInt("codigo"));
+                        int linhasAfetadas = s3.executeUpdate();
+
                         if(linhasAfetadas > 0){
-                            System.out.println("Exercicio do treino alterado com sucesso.");
+                            System.out.println("Carga do exercicio alterada com sucesso.");
+                            PreparedStatement p = c.prepareStatement(
+                                    "INSERT INTO historicoevolucao (codexe, carga, data) VALUES (?, ?, ?)");
+                            p.setInt(1, codigoTreino);
+                            p.setDouble(2, carga);
+                            p.setObject(3, dataAtual);
+                            p.executeUpdate();
                         }else{
-                            System.out.println("Não foi possível alterar o exercicio do treino.");
+                            System.out.println("Não foi possível alterar a carga do exercicio.");
                         }
                     }
-
-
+                    else {
+                        s4.setInt(1, rs.getInt("codexe"));
+                        ResultSet rs4 = s4.executeQuery();
+                        if(rs4.next()) {
+                            double cargaLocal = rs4.getDouble("carga");
+                            PreparedStatement p = c.prepareStatement(
+                                    "INSERT INTO historicoevolucao (codexe, carga, data) VALUES (?, ?, ?)");
+                            p.setInt(1, codigoTreino);
+                            p.setDouble(2, cargaLocal);
+                            p.setObject(3, dataAtual);
+                            p.executeUpdate();
+                        }
+                    }
                 }
             }while (rs.next());
         }else{
