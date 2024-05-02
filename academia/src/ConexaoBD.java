@@ -402,13 +402,19 @@ public class ConexaoBD {
             System.out.println("Digite o codigo do treino que deseja alterar: ");
             codigoTreino = entrada.nextInt();
 
+            PreparedStatement s = c.prepareStatement("UPDATE treinos SET nome = ? WHERE codigo = ?");
+            PreparedStatement s2 = c.prepareStatement("SELECT * FROM exercicios WHERE codigo = ?");
+            PreparedStatement s3 = c.prepareStatement("UPDATE treinoexercicios SET numero_series = ?, min_repeticoes =?, max_repeticoes=?, carga=?, tempo_descanso =? WHERE codexe = ?");
+            PreparedStatement s4 = c.prepareStatement("SELECT * FROM treinoexercicios WHERE codtreino = ?");
+
             if(opcao == 1){
                 System.out.println("Digite o novo nome do treino: ");
                 entrada = new Scanner(System.in);
-                novoNome = "\'" + entrada.nextLine() + "\'";
+                novoNome = entrada.nextLine();
 
-                Statement s = c.createStatement();
-                int linhasAfetadas = s.executeUpdate("UPDATE treinos SET nome = " + novoNome + " WHERE codigo = " + codigoTreino);
+                s.setString(1, novoNome);
+                s.setInt(2, codigoTreino);
+                int linhasAfetadas = s.executeUpdate();
                 if(linhasAfetadas > 0){
                     System.out.println("Treino alterado com sucesso.");
                 }else{
@@ -416,12 +422,12 @@ public class ConexaoBD {
                 }
             }else{
                 do{
-                    Statement s = c.createStatement();
-                    ResultSet rs = s.executeQuery("SELECT * FROM treinoexercicios WHERE codtreino = " + codigoTreino);
+                    s4.setInt(1, codigoTreino);
+                    ResultSet rs = s4.executeQuery();
                     if(rs.next()){
                         do{
-                            Statement s2 = c.createStatement();
-                            ResultSet rs2 = s2.executeQuery("SELECT * FROM exercicios WHERE codigo = "+ rs.getInt("codexe"));
+                            s2.setInt(1, rs.getInt("codexe"));
+                            ResultSet rs2 = s2.executeQuery();
                             while(rs2.next()){
                                 System.out.println(rs2.getInt("codigo")+" - "+rs2.getString("nome"));
                             }
@@ -451,7 +457,13 @@ public class ConexaoBD {
                     System.out.println("Digite o novo tempo de descanso : ");
                     tempo = entrada.nextDouble();
 
-                    int linhasAfetadas = s.executeUpdate("UPDATE treinoexercicios SET numero_series = " + series + ", min_repeticoes =" + min_rep + ", max_repeticoes="+ max_rep + ", carga=" + carga + ", tempo_descanso =" + tempo + " WHERE codexe = " + codigoExe);
+                    s3.setInt(1, series);
+                    s3.setInt(2, min_rep);
+                    s3.setInt(3, max_rep);
+                    s3.setDouble(4, carga);
+                    s3.setDouble(5, tempo);
+                    s3.setInt(6, codigoExe);
+                    int linhasAfetadas = s3.executeUpdate();
                     if(linhasAfetadas > 0){
                         System.out.println("Exercicio do treino alterado com sucesso.");
                     }else{
@@ -461,6 +473,9 @@ public class ConexaoBD {
                 } while (codigoExe != 0);
             }
         }else{
+            System.out.println("Nenhum treino encontrado");
+        }
+        {
             System.out.println("Nenhum treino encontrado");
         }
     }
