@@ -537,9 +537,10 @@ public class ConexaoBD {
             dataAtual = LocalDate.now();
 
             PreparedStatement p = c.prepareStatement(
-                    "INSERT INTO treinosrealizados (codtreino, data) VALUES (?, ?)");
+                    "INSERT INTO treinosrealizados (codtreino, data, alunocpf) VALUES (?, ?, ?)");
             p.setInt(1, codigoTreino);
             p.setObject(2, dataAtual);
+            p.setObject(3, cpfLocal);
             p.execute();
             treinando(codigoTreino, dataAtual);
             System.out.println("Treino Finalizado!");
@@ -618,5 +619,21 @@ public class ConexaoBD {
         }else{
             System.out.println("Nenhum Treino encontrado\n");
         }
+    }
+    public void relatorioPresenca() throws ClassNotFoundException, SQLException{
+        Scanner entrada = new Scanner(System.in);
+        String cpfLocal =  "\'" + buscarAluno() + "\'";
+        int i = 0;
+
+        String query = "SELECT * FROM treinosrealizados WHERE alunocpf = ?";
+        PreparedStatement s = c.prepareStatement(query);
+        s.setString(1, cpfLocal);
+        ResultSet rs = s.executeQuery();
+
+        while(rs.next()){
+            i++;
+            System.out.println("Presença "+ i + " dia: " + rs.getDate("data"));
+        }
+
     }
 }
