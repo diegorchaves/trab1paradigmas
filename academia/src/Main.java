@@ -26,6 +26,7 @@ public class Main {
             System.out.println("10 - Excluir exercicios do Treino.");
             System.out.println("11 - Iniciar treinamento.");
             System.out.println("12 - Relatorio Presença");
+            System.out.println("13 - Relatorio Evoluçao de carga");
             opcaoEscolhida = entrada.nextInt();
 
             switch(opcaoEscolhida) {
@@ -72,6 +73,9 @@ public class Main {
                     break;
                 case 12:
                     conexaoLocal.relatorioPresenca();
+                    break;
+                case 13:
+                    conexaoLocal.relatorioEvolucaoCarga();
                     break;
             }
         } while(opcaoEscolhida != 0);

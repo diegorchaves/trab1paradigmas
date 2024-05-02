@@ -542,7 +542,7 @@ public class ConexaoBD {
             p.setObject(2, dataAtual);
             p.setObject(3, cpfLocal);
             p.execute();
-            treinando(codigoTreino, dataAtual);
+            treinando(codigoTreino, dataAtual, cpfLocal);
             System.out.println("Treino Finalizado!");
 
         }else{
@@ -550,7 +550,7 @@ public class ConexaoBD {
         }
 
     }
-    public void treinando(int codigoTreino, LocalDate dataAtual) throws ClassNotFoundException, SQLException{
+    public void treinando(int codigoTreino, LocalDate dataAtual, String alunoCpf) throws ClassNotFoundException, SQLException{
         Scanner entrada = new Scanner(System.in);
 
         String query = "SELECT * FROM treinoexercicios WHERE codtreino = ?";
@@ -569,8 +569,8 @@ public class ConexaoBD {
         ResultSet rs = s.executeQuery();
         if(rs.next()){
             do{
-
-                s2.setInt(1, rs.getInt("codexe"));
+                int codexe = rs.getInt("codexe");
+                s2.setInt(1, codexe);
                 ResultSet rs2 = s2.executeQuery();
                 while(rs2.next()){
                     System.out.println("Exercicio: "+rs2.getString("nome"));
@@ -591,10 +591,11 @@ public class ConexaoBD {
                             if(linhasAfetadas > 0){
                                 System.out.println("Carga do exercicio alterada com sucesso.");
                                 PreparedStatement p = c.prepareStatement(
-                                        "INSERT INTO historicoevolucao (codexe, carga, data) VALUES (?, ?, ?)");
-                                p.setInt(1, codigoTreino);
+                                        "INSERT INTO historicoevolucao (codexe, carga, data, alunocpf) VALUES (?, ?, ?, ?)");
+                                p.setInt(1, codexe);
                                 p.setDouble(2, carga);
                                 p.setObject(3, dataAtual);
+                                p.setString(4, alunoCpf);
                                 p.executeUpdate();
                             }else{
                                 System.out.println("Não foi possível alterar a carga do exercicio.");
@@ -606,10 +607,11 @@ public class ConexaoBD {
                             if(rs4.next()) {
                                 double cargaLocal = rs4.getDouble("carga");
                                 PreparedStatement p = c.prepareStatement(
-                                        "INSERT INTO historicoevolucao (codexe, carga, data) VALUES (?, ?, ?)");
-                                p.setInt(1, codigoTreino);
+                                        "INSERT INTO historicoevolucao (codexe, carga, data, alunocpf) VALUES (?, ?, ?, ?)");
+                                p.setInt(1, codexe);
                                 p.setDouble(2, cargaLocal);
                                 p.setObject(3, dataAtual);
+                                p.setString(4, alunoCpf);
                                 p.executeUpdate();
                             }
                         }
@@ -630,9 +632,34 @@ public class ConexaoBD {
         s.setString(1, cpfLocal);
         ResultSet rs = s.executeQuery();
 
-        while(rs.next()){
-            i++;
-            System.out.println("Presença "+ i + " dia: " + rs.getDate("data"));
+        if(rs.next()){
+            do{
+                i++;
+                System.out.println("Presença "+ i + " dia: " + rs.getDate("data"));
+            }while(rs.next());
+        } else {
+            System.out.println("Nenhuma presença encontrada!");
+        }
+
+    }
+    public void relatorioEvolucaoCarga() throws ClassNotFoundException, SQLException{
+        Scanner entrada = new Scanner(System.in);
+        imprimirExercicios("SELECT * FROM exercicios");
+        System.out.println("Digite o codigo do exercicio que deseja ver a sua evolução: ");
+        int codexe = entrada.nextInt();
+        int i = 0;
+
+        String query = "SELECT * FROM historicoevolucao WHERE codexe = ?";
+        PreparedStatement s = c.prepareStatement(query);
+        s.setInt(1, codexe);
+        ResultSet rs = s.executeQuery();
+        if(rs.next()){
+            do{
+                i++;
+                System.out.println("Carga "+ i + ": "+ rs.getDouble("carga") + " Kg" + " Data: "+ rs.getDate("data"));
+            }while(rs.next());
+        }else{
+            System.out.println("Nenhuma evolução encontrada!");
         }
 
     }
